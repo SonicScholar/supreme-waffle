@@ -1,0 +1,11 @@
+main: com.matrixugly.magicwand.Main
+name: MatrixMagicWand
+version: 1.0
+author: matrixugly
+description: A plugin that lets users build and upgrade a magic wand for discovering and mining valuable items
+commands:
+  wandhelp:
+    description: Shows this help message
+    usage: /wandhelp
+    permission: com.matrixugly.dynamicshop.help
+    permission-message: You don't have the com.matrixugly.dynamicshop.help permission.
