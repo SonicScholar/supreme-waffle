@@ -1,0 +1,112 @@
+Magic Wand Plugin!
+
+Wand - Blaze Rod
+
+Wand Attributes
+Search Distance
+Mining Vein Distance
+Item Detection Level
+Cool down
+
+
+Levels (6 per attribute)
+
+Search Distance - 3x3 square of the wall you’re facing
+-  3, 4, 6, 9, 13, 18 max
+
+Item Detection
+- Coal, Iron, Redstone, Gold, Emerald, Diamond (custom)
+
+Mining Vein Distance (1x2 veins)
+- 1 deep, 2 deep, 4 deep, 7 deep, 11 deep, 16 deep max
+
+
+Cool down
+15 sec, 13sec, 11 sec, 9 sec, 7 sec,  4 sec
+
+
+
+Usage
+
+Item Detection
+Right click blaze wand
+
+Mine veins
+Left click blaze wand
+
+
+Commands
+/spellbook to receive a spell book capable of holding xp.
+(not applicable if XP can just be stored inside the wand)
+
+/wand levelup [attribute]
+Converts xp stored in a spellbook into an increased level for the wand you are holding
+
+
+
+Levels and XP Points
+24 total levels. Can maybe max this at 20, to incentivize different wand builds ? (optional)
+XP values (subject to change)
+
+Item
+XP
+Coal
+1
+Iron
+2
+Redstone
+3
+Lapis
+3
+Gold
+5
+Emerald
+20
+Diamond
+15
+
+XP per level (Increases 10% of the previous level)
+ 
+100
+110
+121
+133
+146
+161
+177
+194
+214
+235
+259
+285
+313
+345
+379
+417
+415
+505
+555
+611
+672
+740
+814
+895
+	
+
+
+
+
+
+Data Storage
+Want to store level info in bits of the item if possible. This makes the wands and spellbooks transferrable. The ‘damage value’ of an item is a short integer (16 bits)
+There are 4 attributes, with 6 levels each. This can be stored in 4 heximal (base 6) digits
+Highest decimal number needed = 6^4 = 1296. Binary is 101,0001,0000 (11 bits)
+
+
+5 bits left for storing level future information
+
+XP will be stored in a book in the user’s inventory called “Spellbook” if we use the XP level scheme above, I’ll only need 10 bits to use as the XP counter as long as the xp needed stays under 1024.
+
+Other Options
+	Wands based on “shrines” (i.e. shrine of coal blocks allows wand to find coal). Would have to be charged or placed on the shrine for a certain amount of time to find that item, and can only find one type at a time or at all. Then leveling up only needs to be distance, cooldown and vein mining and such. This way, you have to find a lot of diamond before you can “train” the wand to find it.
+
