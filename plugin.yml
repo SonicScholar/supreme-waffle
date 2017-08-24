@@ -7,5 +7,15 @@ commands:
   wandhelp:
     description: Shows this help message
     usage: /wandhelp
-    permission: com.matrixugly.dynamicshop.help
-    permission-message: You don't have the com.matrixugly.dynamicshop.help permission.
+    permission: com.matrixugly.magicwand.help
+    permission-message: You don't have the com.matrixugly.magicwand.help permission.
+  wandxp:
+    description: Shows available points for levelups, xp in the wand, and the amount to reach the next level
+    usage: /wandxp
+    permission: com.matrixugly.magicwand.xp
+    permission-message: You don't have the com.matrixugly.magicwand.xp permission.
+  wandlevelup:
+    description: Levels up the attribute of a wand
+    usage: /wandlevelup [attribute]
+    permission: com.matrixugly.magicwand.levelup
+    permission-message: You don't have the com.matrixugly.magicwand.levelup permission

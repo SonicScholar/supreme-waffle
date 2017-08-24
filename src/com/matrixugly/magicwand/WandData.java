@@ -1,7 +1,10 @@
 package com.matrixugly.magicwand;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.command.ConsoleCommandSender;
@@ -27,11 +30,13 @@ public class WandData {
 	 * detection level, third - mining level, fourth - cooldown
 	 */
 	short rawData;
+	int xp;
 	ItemStack blazeRod;
 
 	public WandData() {
 		blazeRod = new ItemStack(Material.BLAZE_ROD);
 		rawData = 0;
+		xp = 0;
 	}
 
 	/**
@@ -60,15 +65,20 @@ public class WandData {
 			rawData = 0;
 			String heximal = this.toHeximalString();
 			lore.add(heximal);
+			lore.add("0"); //0 initial xp
 			rodMeta.setLore(lore);
-		} else if (lore.size() == 1) {
-			// assume lore has been created
-			String levelLore = lore.get(0);
-			rawData = Short.parseShort(levelLore, 6);
-		} else {
-			throw new Exception("This blaze rod has multiple lore. It can only have 1 for magic wand.");
+		} 
+		else {
+			if (lore.size() >= 1) {
+				String levelLore = lore.get(0);
+				rawData = Short.parseShort(levelLore, 6); 
+			}
+			if (lore.size() >= 2) {
+				String xpLore = lore.get(1);
+				xp = Integer.parseInt(xpLore);
+			}
 		}
-
+		this.blazeRod = blazeRod;
 	}
 
 	public static int SEARCH_DISTANCE_DIGIT = 0;
@@ -80,6 +90,20 @@ public class WandData {
 	private static int[] MINING_LEVEL = { 1, 2, 4, 7, 11, 16 };
 	private static int[] COOLDOWN_LEVEL = { 15, 13, 11, 9, 7, 4 };
 
+	private static final ConcurrentHashMap<Material, Integer> xpValues;
+	static
+	{
+		xpValues = new ConcurrentHashMap<Material, Integer>();
+		xpValues.put(Material.COAL_ORE, 1);
+		xpValues.put(Material.IRON_ORE, 2);
+		xpValues.put(Material.REDSTONE_ORE, 3);
+		xpValues.put(Material.LAPIS_ORE, 3);
+		xpValues.put(Material.GOLD_ORE, 5);
+		xpValues.put(Material.EMERALD_ORE, 20);
+		xpValues.put(Material.DIAMOND_ORE, 15);
+
+	}
+	
 	public static Material[] MATERIAL_LEVEL = {
 			Material.COAL_ORE, 
 			Material.IRON_ORE, 
@@ -91,6 +115,40 @@ public class WandData {
 	public static int[] XP_PER_LEVEL = { 100, 110, 121, 133, 146, 161, 177, 194, 214, 235, 259, 285, 313, 345, 379, 417,
 			451, 505, 555, 611, 672, 740, 814, 895 };
 
+	public int getUsedLevels()
+	{
+		int result = getSearchDistanceLevel()
+				+ getItemDetectionLevel()
+				+ getMiningLevel()
+				+ getCooldownLevel() -4; //all levels start at 1.
+		
+		return result;
+	}
+	
+	public int getAvailableLevels()
+	{
+		//figure out how much xp is not usable by the used levels
+		int usedLevels = this.getUsedLevels();
+		int xpLeft = xp;
+		for(int i=0; i< usedLevels; i++)
+		{
+			xpLeft -= XP_PER_LEVEL[i];
+		}
+		
+		int availableLevels = 0;
+		do
+		{
+			if(availableLevels + usedLevels == XP_PER_LEVEL.length)
+				break;
+			
+			xpLeft -= XP_PER_LEVEL[availableLevels + usedLevels];
+			if(xpLeft > 0)
+				availableLevels++;
+		}while(xpLeft > 0);
+		
+		return availableLevels;
+	}
+	
 	public int getSearchDistance() {
 		return DISTANCE_LEVEL[this.getSearchDistanceLevel() - 1];
 	}
@@ -222,14 +280,38 @@ public class WandData {
 		String levels = this.toHeximalString();
 		List<String> lore = new ArrayList<String>();
 		lore.add(levels);
-		blazeRod.getItemMeta().setLore(lore);
+		lore.add(new Integer(xp).toString());
+		ItemMeta meta = blazeRod.getItemMeta();
+		meta.setLore(lore);
+		blazeRod.setItemMeta(meta);
 	}
-
+	
+	public static int getXpForMaterial(Material blockMaterial) {
+		if(!xpValues.containsKey(blockMaterial))
+			return 0;
+		return xpValues.get(blockMaterial);
+	}
+	
+	public int getXp()
+	{
+		return xp;
+	}
+	
+	public void addXp(int xp)
+	{
+		int maxXP = Arrays.stream(XP_PER_LEVEL).sum();
+		this.xp += xp;
+		
+		//make sure added xp doesn't go past the max
+		this.xp = Math.min(this.xp, maxXP);
+	}
+	
 	public static void doTests() {
 		ConsoleCommandSender console = Bukkit.getConsoleSender();
 		WandData empty;
 		try {
-			empty = new WandData(new ItemStack(Material.BLAZE_ROD, 1));
+			ItemStack item = new ItemStack(Material.BLAZE_ROD, 1);
+			empty = new WandData(item);
 
 			console.sendMessage("Starting Magic Wand Tests");
 			console.sendMessage("empty wand: " + empty.toHeximalString() + " raw: " + empty.rawData);
@@ -260,13 +342,26 @@ public class WandData {
 
 			empty.setSearchDistanceLevel((short) 4);
 			console.sendMessage("wand 10: " + empty.toHeximalString() + " raw: " + empty.rawData);
+			
+			empty.addXp(90);
+			empty.saveData();
+			
+			WandData other = new WandData(item);
+			for(String lore : item.getItemMeta().getLore())
+				console.sendMessage("lore: " + lore);
+
+			
 
 			console.sendMessage("getLevels: " + empty.getCooldownLevel() + " " + empty.getMiningLevel() + " "
 					+ empty.getItemDetectionLevel() + " " + empty.getSearchDistanceLevel());
 
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			console.sendMessage(e.getMessage());
+			String message = "";
+			e.printStackTrace();
+			console.sendMessage("unit test error: " + message);
 		}
 	}
+
+
 }

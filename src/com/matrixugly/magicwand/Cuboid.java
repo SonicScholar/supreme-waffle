@@ -31,18 +31,18 @@ public class Cuboid implements Iterable<Block>{
 		min = new Location(w, minX, minY, minZ);
 		max = new Location(w, maxX, maxY, maxZ);
 		
-		Bukkit.getConsoleSender()
-		.sendMessage("min x: " + min.getBlockX() + 
-				" y: " + min.getBlockY() + 
-				" z: " + min.getBlockZ() +
-				" type: " + w.getBlockAt(min).getType());
-		
-		
-		Bukkit.getConsoleSender()
-		.sendMessage("max x: " + max.getBlockX() + 
-				" y: " + max.getBlockY() + 
-				" z: " + max.getBlockZ() +
-				" type: " + max.getBlock().getType());
+//		Bukkit.getConsoleSender()
+//		.sendMessage("min x: " + min.getBlockX() + 
+//				" y: " + min.getBlockY() + 
+//				" z: " + min.getBlockZ() +
+//				" type: " + w.getBlockAt(min).getType());
+//		
+//		
+//		Bukkit.getConsoleSender()
+//		.sendMessage("max x: " + max.getBlockX() + 
+//				" y: " + max.getBlockY() + 
+//				" z: " + max.getBlockZ() +
+//				" type: " + max.getBlock().getType());
 		
 	}
 	
@@ -66,34 +66,15 @@ public class Cuboid implements Iterable<Block>{
 		if(materials.size() == 0)
 			return foundBlocks;
 		
-//		for(int x = min.getBlockX(); x <= max.getBlockX(); x++)
-//		{
-//			for(int z = min.getBlockZ(); z <= max.getBlockZ(); z++)
-//			{
-//				for(int y = min.getBlockY(); y <= max.getBlockY(); y++)
-//				{
-//					Block b = w.getBlockAt(x,y,z);
 		for(Block b : this)
 		{
 					Material m = b.getType();
-					Bukkit.getConsoleSender()
-					.sendMessage("search x: " + b.getX() + 
-							" y: " + b.getY() + 
-							" z: " + b.getZ() +
-							" type: " + m);
 					materials.stream()
 					.filter(it -> it == m)
 					.findAny().ifPresent(it -> foundBlocks.add(b));
-					
-//					boolean tru = true;
-//					if(tru)return foundBlocks;
-//				}
-//			}
-//		}
+		
 		}
-		
 		return foundBlocks;
-		
 	}
 
 	@Override
@@ -101,8 +82,4 @@ public class Cuboid implements Iterable<Block>{
 		
 		return new CuboidIterator(this);
 	}
-	
-	
-	//iterate
-	
 }
