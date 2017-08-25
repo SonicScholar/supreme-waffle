@@ -8,6 +8,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
@@ -78,6 +79,8 @@ public class WandEventListener implements Listener {
 			}
 				
 		}
+		
+		
 	}
 	
 	@EventHandler
@@ -176,7 +179,21 @@ public class WandEventListener implements Listener {
 				boolean newLevel = wandData.addXp(xp);
 				if(newLevel)
 					p.sendMessage("You gained a level! Use the '/wandlevelup' command to upgrade your wand!");
-				b.breakNaturally();
+				
+				if(blockMaterial == Material.IRON_ORE && currentItem.getType() == Material.BLAZE_ROD)
+				{
+					b.setType(Material.AIR);
+					World w = p.getWorld();
+					w.dropItemNaturally(b.getLocation(), new ItemStack(Material.IRON_INGOT));
+				}
+				else if(blockMaterial == Material.GOLD_ORE && currentItem.getType() == Material.BLAZE_ROD)
+				{
+					b.setType(Material.AIR);
+					World w = p.getWorld();
+					w.dropItemNaturally(b.getLocation(), new ItemStack(Material.GOLD_INGOT));
+				}
+				else
+					b.breakNaturally();
 			}
 			wandData.saveData();
 			resetCooldown(p);
