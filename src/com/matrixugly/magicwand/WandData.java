@@ -81,10 +81,10 @@ public class WandData {
 		this.blazeRod = blazeRod;
 	}
 
-	public static int SEARCH_DISTANCE_DIGIT = 0;
-	public static int SEARCH_DETECTION_DIGIT = 1;
-	public static int MINING_DIGIT = 2;
-	public static int COOLDOWN_DIGIT = 3;
+//	public static int SEARCH_DISTANCE_DIGIT = 0;
+//	public static int SEARCH_DETECTION_DIGIT = 1;
+//	public static int MINING_DIGIT = 2;
+//	public static int COOLDOWN_DIGIT = 3;
 
 	private static int[] DISTANCE_LEVEL = { 3, 4, 6, 9, 13, 18 };
 	private static int[] MINING_LEVEL = { 1, 2, 4, 7, 11, 16 };
@@ -142,7 +142,7 @@ public class WandData {
 				break;
 			
 			xpLeft -= XP_PER_LEVEL[availableLevels + usedLevels];
-			if(xpLeft > 0)
+			if(xpLeft >= 0)
 				availableLevels++;
 		}while(xpLeft > 0);
 		
@@ -190,7 +190,7 @@ public class WandData {
 	// search distance
 	public short getSearchDistanceLevel() {
 		String heximal = toHeximalString();
-		char c = heximal.charAt(SEARCH_DISTANCE_DIGIT);
+		char c = heximal.charAt(WandLevelAttribute.SEARCH_DISTANCE.getDigit());
 		return (short) (Short.parseShort("" + c, 6) + 1);
 
 	}
@@ -201,7 +201,7 @@ public class WandData {
 		String heximal = toHeximalString();
 		StringBuilder s = new StringBuilder();
 		for (int i = 0; i < 4; i++) {
-			if (i != SEARCH_DISTANCE_DIGIT)
+			if (i != WandLevelAttribute.SEARCH_DISTANCE.getDigit())
 				s.append(heximal.charAt(i));
 			else
 				s.append(validLevel);
@@ -213,7 +213,7 @@ public class WandData {
 	// item detection
 	public short getItemDetectionLevel() {
 		String heximal = toHeximalString();
-		char c = heximal.charAt(SEARCH_DETECTION_DIGIT);
+		char c = heximal.charAt(WandLevelAttribute.SEARCH_DETECTION.getDigit());
 		return (short) (Short.parseShort("" + c, 6) + 1);
 	}
 
@@ -223,7 +223,7 @@ public class WandData {
 		String heximal = toHeximalString();
 		StringBuilder s = new StringBuilder();
 		for (int i = 0; i < 4; i++) {
-			if (i != SEARCH_DETECTION_DIGIT)
+			if (i != WandLevelAttribute.SEARCH_DETECTION.getDigit())
 				s.append(heximal.charAt(i));
 			else
 				s.append(validLevel);
@@ -235,7 +235,7 @@ public class WandData {
 	// mining
 	public short getMiningLevel() {
 		String heximal = toHeximalString();
-		char c = heximal.charAt(MINING_DIGIT);
+		char c = heximal.charAt(WandLevelAttribute.MINING_DISTANCE.getDigit());
 		return (short) (Short.parseShort("" + c, 6) + 1);
 	}
 
@@ -245,7 +245,7 @@ public class WandData {
 		String heximal = toHeximalString();
 		StringBuilder s = new StringBuilder();
 		for (int i = 0; i < 4; i++) {
-			if (i != MINING_DIGIT)
+			if (i != WandLevelAttribute.MINING_DISTANCE.getDigit())
 				s.append(heximal.charAt(i));
 			else
 				s.append(validLevel);
@@ -257,7 +257,7 @@ public class WandData {
 	// cooldown
 	public short getCooldownLevel() {
 		String heximal = toHeximalString();
-		char c = heximal.charAt(COOLDOWN_DIGIT);
+		char c = heximal.charAt(WandLevelAttribute.COOLDOWN.getDigit());
 		return (short) (Short.parseShort("" + c, 6) + 1);
 	}
 
@@ -267,7 +267,7 @@ public class WandData {
 		String heximal = toHeximalString();
 		StringBuilder s = new StringBuilder();
 		for (int i = 0; i < 4; i++) {
-			if (i != COOLDOWN_DIGIT)
+			if (i != WandLevelAttribute.COOLDOWN.getDigit())
 				s.append(heximal.charAt(i));
 			else
 				s.append(validLevel);
@@ -292,20 +292,86 @@ public class WandData {
 		return xpValues.get(blockMaterial);
 	}
 	
+	public int getLevelFromXp()
+	{
+		int currentXpLevel = 0;
+		
+		int currLevelXP = this.xp;
+		for(int i=0; i< XP_PER_LEVEL.length; i++)
+		{
+			currLevelXP -= XP_PER_LEVEL[i];
+			if(currLevelXP < 0)
+				break;
+			else
+				currentXpLevel++;
+		}
+		
+		return currentXpLevel;
+	}
+	
 	public int getXp()
 	{
 		return xp;
 	}
 	
-	public void addXp(int xp)
+	/**
+	 * 
+	 * @param xp
+	 * @return true, if by adding this xp, it causes a level to be gained
+	 */
+	public boolean addXp(int xp)
 	{
+		int oldXpLevel = getLevelFromXp();
+		
 		int maxXP = Arrays.stream(XP_PER_LEVEL).sum();
 		this.xp += xp;
 		
+		int newXpLevel = getLevelFromXp();
+		
+		
 		//make sure added xp doesn't go past the max
 		this.xp = Math.min(this.xp, maxXP);
+		
+		return newXpLevel > oldXpLevel;
 	}
 	
+	public void levelup(WandLevelAttribute levelAttribute) throws Exception {
+		int availableLevels = this.getAvailableLevels();
+		if(availableLevels < 1)
+			throw new Exception("No levels available to spend!");
+		
+		int maxLevel = 6;
+		Exception e = new Exception("Already at max level (" + maxLevel +")!");
+		switch(levelAttribute)
+		{
+		case SEARCH_DISTANCE:
+			int search_dist = getSearchDistanceLevel();
+			if(search_dist >= maxLevel)
+				throw e;
+			setSearchDistanceLevel((short) (search_dist+1));
+			break;
+		case SEARCH_DETECTION:
+			int search_detect = getItemDetectionLevel();
+			if(search_detect >= maxLevel)
+				throw e;
+			setItemDetectionLevel((short) (search_detect+1));
+			break;
+		case MINING_DISTANCE:
+			int mine_dist = getMiningLevel();
+			if(mine_dist >= maxLevel)
+				throw e;
+			setMiningLevel((short) (mine_dist+1));
+			break;
+		case COOLDOWN:
+			int cooldown = getCooldownLevel();
+			if(cooldown >= maxLevel)
+				throw e;
+			setCooldownLevel((short) (cooldown+1));
+			break;
+		}
+		this.saveData();
+	}
+
 	public static void doTests() {
 		ConsoleCommandSender console = Bukkit.getConsoleSender();
 		WandData empty;
@@ -349,7 +415,6 @@ public class WandData {
 			WandData other = new WandData(item);
 			for(String lore : item.getItemMeta().getLore())
 				console.sendMessage("lore: " + lore);
-
 			
 
 			console.sendMessage("getLevels: " + empty.getCooldownLevel() + " " + empty.getMiningLevel() + " "
@@ -362,6 +427,8 @@ public class WandData {
 			console.sendMessage("unit test error: " + message);
 		}
 	}
+
+
 
 
 }

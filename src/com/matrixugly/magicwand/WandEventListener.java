@@ -3,6 +3,7 @@ package com.matrixugly.magicwand;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Location;
@@ -13,6 +14,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
@@ -48,6 +50,37 @@ public class WandEventListener implements Listener {
 	}
 	
 	@EventHandler
+	public void onBlockBreak(BlockBreakEvent e) throws Exception
+	{
+		Player p = e.getPlayer();
+		PlayerInventory inv = p.getInventory();
+		ItemStack currentItem = inv.getItemInMainHand();
+		
+		Material blockType = e.getBlock().getType();
+		if(blockType == Material.OBSIDIAN && currentItem.getType() == Material.BLAZE_ROD)
+		{
+			if(currentItem.hasItemMeta() && 
+					currentItem.getItemMeta().getDisplayName().equalsIgnoreCase("Magic Wand"))
+				return;
+			
+			Random RNG = new Random();
+			float f = RNG.nextFloat();
+			if(f < .10)
+			{
+				p.sendMessage("Sorry, your magic blaze rod was turned to dust... bad RNG :(");
+				inv.setItemInMainHand(new ItemStack(Material.BLAZE_POWDER,1));
+			}
+			else
+			{
+				WandData newMagicWand = new WandData(currentItem);
+				newMagicWand.saveData();
+				p.sendMessage("Your blaze rod's character is true! It is now a magic wand!");
+			}
+				
+		}
+	}
+	
+	@EventHandler
 	public void playerInteract(PlayerInteractEvent e) throws Exception
 	{
 		boolean wandIsValid = validateMagicWand(e);
@@ -76,7 +109,7 @@ public class WandEventListener implements Listener {
 		Location l1 = playerLoc;
 		Location l2 = playerLoc;
 		
-		Block clicked = e.getClickedBlock();
+		//Block clicked = e.getClickedBlock();
 		//p.sendMessage("block: " + clicked.getType() + " " + clicked.getX() + clicked.getY() + clicked.getZ());
 		
 		switch(wandDirection)
@@ -140,7 +173,9 @@ public class WandEventListener implements Listener {
 			{
 				Material blockMaterial = b.getType();
 				int xp = WandData.getXpForMaterial(blockMaterial);
-				wandData.addXp(xp);
+				boolean newLevel = wandData.addXp(xp);
+				if(newLevel)
+					p.sendMessage("You gained a level! Use the '/wandlevelup' command to upgrade your wand!");
 				b.breakNaturally();
 			}
 			wandData.saveData();
