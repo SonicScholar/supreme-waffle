@@ -97,23 +97,26 @@ public class WandEventListener implements Listener {
 		WandData wandData = new WandData(currentItem);
 
 		//search for stuff
-		Location playerLoc = p.getEyeLocation();
-		int x = playerLoc.getBlockX();
-		int y = playerLoc.getBlockY();
-		int z = playerLoc.getBlockZ();
+		Block clicked = e.getClickedBlock();
+		Location playerLoc = clicked.getLocation();
+//		p.sendMessage("block: " + clicked.getType() + " " + clicked.getX() + " "+ clicked.getY() + " "+ clicked.getZ());
 		
 		int radius = 1;
 		if(e.getAction() == Action.LEFT_CLICK_BLOCK)
-			radius = wandData.getMiningDistance();
+			radius = wandData.getMiningDistance() -1;
 		else if(e.getAction() == Action.RIGHT_CLICK_BLOCK)
-			radius = wandData.getSearchDistance();
+			radius = wandData.getSearchDistance() -1;
+		
+		int x = playerLoc.getBlockX();
+		//y should be no less than player's eye height
+		int y = (int) Math.max(clicked.getY(), p.getLocation().getBlockY()+1);
+		int z = playerLoc.getBlockZ();
+		
 		
 		BlockFace wandDirection = e.getBlockFace().getOppositeFace();
 		Location l1 = playerLoc;
 		Location l2 = playerLoc;
 		
-		//Block clicked = e.getClickedBlock();
-		//p.sendMessage("block: " + clicked.getType() + " " + clicked.getX() + clicked.getY() + clicked.getZ());
 		
 		switch(wandDirection)
 		{
@@ -124,7 +127,7 @@ public class WandEventListener implements Listener {
 		// corner2: startblock.x + radius, startblock.y-1, z-1
 		case EAST:
 			//p.sendMessage("EAST");
-			l1 = new Location(p.getWorld(), x+1, y+1, z+1);
+			l1 = new Location(p.getWorld(), x, y+1, z+1);
 			l2 = new Location(p.getWorld(), x+radius, y-1, z-1);
 			break;
 		//north - negative z
@@ -134,7 +137,7 @@ public class WandEventListener implements Listener {
 		//corner2:  x-1, y-1, startblock.z - radius
 		case NORTH:
 			//p.sendMessage("NORTH");
-			l1 = new Location(p.getWorld(), x+1, y+1, z-1);
+			l1 = new Location(p.getWorld(), x+1, y+1, z);
 			l2 = new Location(p.getWorld(), x-1, y-1, z-radius);
 			break;
 		//south - positive z
@@ -144,7 +147,7 @@ public class WandEventListener implements Listener {
 		//corner2:  x-1, y-1, startblock.z + radius
 		case SOUTH:
 			//p.sendMessage("SOUTH");
-			l1 = new Location(p.getWorld(), x+1, y+1, z+1);
+			l1 = new Location(p.getWorld(), x+1, y+1, z);
 			l2 = new Location(p.getWorld(), x-1, y-1, z+radius);
 			break;
 		//west - negative x
@@ -154,7 +157,7 @@ public class WandEventListener implements Listener {
 		// corner2: startblock.x - radius, startblock.y-1, z-1
 		case WEST:
 			//p.sendMessage("WEST");
-			l1 = new Location(p.getWorld(), x-1, y+1, z+1);
+			l1 = new Location(p.getWorld(), x, y+1, z+1);
 			l2 = new Location(p.getWorld(), x-radius, y-1, z-1);
 			break;
 		case UP:
