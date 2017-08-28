@@ -99,7 +99,7 @@ public class WandData {
 		xpValues.put(Material.REDSTONE_ORE, 3);
 		xpValues.put(Material.LAPIS_ORE, 3);
 		xpValues.put(Material.GOLD_ORE, 5);
-		xpValues.put(Material.EMERALD_ORE, 20);
+		xpValues.put(Material.EMERALD_ORE, 35);
 		xpValues.put(Material.DIAMOND_ORE, 15);
 		xpValues.put(Material.QUARTZ_ORE, 1);
 
