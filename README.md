@@ -42,16 +42,16 @@ Each attribute has a maximum level of 6. See below for information on what each 
 By default, your magic wand has a search depth of 3, that can only detect coal, it can mine a 3x3x1 vein and will take 15 seconds before you can use it again. These are the different levels of each attribute. It's up to you to decide how to build your wand.
 
 *Search Depth* - 3x3 square of block you clicked on:
-- 3, 4, 6, 9, 13, 18
+- 3, 5, 7, 9, 12, 16
 
 *Item Detection*
 - Coal, Iron, Redstone, Gold, Emerald, Diamond
 
 *Mining Vein Depth* - 3x3 square of the block you clicked on 
-- 1, 2, 4, 7, 11, 16 
+- 1, 2, 3, 4, 5, 8 
 
 *Cool down* - Time before you can use the magic wand again
-15 sec, 13 sec, 11 sec, 9 sec, 7 sec,  4 sec
+10 sec, 9 sec, 8 sec, 6 sec, 4 sec,  2 sec
 
 
 
@@ -67,7 +67,19 @@ By default, your magic wand has a search depth of 3, that can only detect coal, 
 
 
 ## Experience
-Lastly, here's a list of the amount of xp you have to gain for each level up.
+Nist of the amount of xp you have to gain for each level up.
 
 100, 110, 121, 133, 146, 161, 177, 194, 214, 235, 259, 285, 313, 345, 379, 417,
 			451, 505, 555, 611, 672, 740, 814, 895
+
+List of xp for each item
+
+- Coal Ore - 1
+- Quartz Ore - 1
+- Iron Ore - 2
+- Redstone Ore - 3
+- Lapis Ore - 3
+- Gold Ore - 5
+- Diamond Ore - 15
+- Emerald Ore - 35
+
