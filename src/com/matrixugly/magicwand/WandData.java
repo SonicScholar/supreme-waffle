@@ -86,9 +86,9 @@ public class WandData {
 //	public static int MINING_DIGIT = 2;
 //	public static int COOLDOWN_DIGIT = 3;
 
-	private static int[] DISTANCE_LEVEL = { 3, 4, 6, 9, 13, 18 };
-	private static int[] MINING_LEVEL = { 1, 2, 4, 7, 11, 16 };
-	private static int[] COOLDOWN_LEVEL = { 15, 13, 11, 9, 7, 4 };
+	private static int[] DISTANCE_LEVEL = { 3, 5, 7, 9, 12, 16 };
+	private static int[] MINING_LEVEL = { 1, 2, 3, 4, 5, 8 };
+	private static int[] COOLDOWN_LEVEL = { 10, 9, 8, 6, 4, 2 };
 
 	private static final ConcurrentHashMap<Material, Integer> xpValues;
 	static
@@ -101,6 +101,7 @@ public class WandData {
 		xpValues.put(Material.GOLD_ORE, 5);
 		xpValues.put(Material.EMERALD_ORE, 20);
 		xpValues.put(Material.DIAMOND_ORE, 15);
+		xpValues.put(Material.QUARTZ_ORE, 1);
 
 	}
 	
