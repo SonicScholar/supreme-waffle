@@ -67,7 +67,19 @@ By default, your magic wand has a search depth of 3, that can only detect coal, 
 
 
 ## Experience
-Lastly, here's a list of the amount of xp you have to gain for each level up.
+Nist of the amount of xp you have to gain for each level up.
 
 100, 110, 121, 133, 146, 161, 177, 194, 214, 235, 259, 285, 313, 345, 379, 417,
 			451, 505, 555, 611, 672, 740, 814, 895
+
+List of xp for each item
+
+- Coal Ore - 1
+- Quartz Ore - 1
+- Iron Ore - 2
+- Redstone Ore - 3
+- Lapis Ore - 3
+- Gold Ore - 5
+- Diamond Ore - 15
+- Emerald Ore - 35
+
