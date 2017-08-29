@@ -212,7 +212,9 @@ public class WandEventListener implements Listener {
 				p.sendMessage("found block: " + b.getType() + " at x:" + (bLoc.getBlockX()) 
 						+ " y:" + bLoc.getBlockY() + " z:" + bLoc.getBlockZ());
 			}
-			resetCooldown(p);
+			//Not going to reset the cooldown for search.
+			//Otherwise it's too underpowered
+			//resetCooldown(p);
 			
 		}
 	}
@@ -249,6 +251,9 @@ public class WandEventListener implements Listener {
 			if(!"Magic Wand".equalsIgnoreCase(itemName))
 				return false;
 
+			if(e.getAction() == Action.RIGHT_CLICK_BLOCK)
+				return true;
+			
 			WandData wandData = new WandData(currentItem);
 			int cooldown = wandData.getCooldown();
 			boolean isCooldownReady = isCooldownReady(p, cooldown);
